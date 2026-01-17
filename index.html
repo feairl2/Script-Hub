@@ -1,225 +1,163 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Script Hub - 現代化腳本庫</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        
-        body {
-            background-color: #101010;
-            color: #e0e0e0;
-            font-family: 'Inter', sans-serif;
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .glass-card:hover {
-            border-color: #3b82f6;
-            transform: translateY(-8px);
-            background: rgba(255, 255, 255, 0.07);
-            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
-        }
-        .custom-loader {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 3px solid #3b82f6;
-            border-top-color: transparent;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* 自定義捲軸 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #101010; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #444; }
-    </style>
+<meta charset="UTF-8" />
+<title>Script 搜尋站</title>
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", Arial;
+        background: #0e0e0e;
+        color: #fff;
+    }
+
+    header {
+        padding: 20px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+        background: linear-gradient(90deg, #7c5cff, #00e5ff);
+    }
+
+    .search-box {
+        display: flex;
+        justify-content: center;
+        margin: 20px;
+        gap: 10px;
+    }
+
+    .search-box input {
+        width: 300px;
+        padding: 12px;
+        border-radius: 8px;
+        border: none;
+        font-size: 16px;
+    }
+
+    .search-box button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #7c5cff;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .card {
+        background: #1a1a1a;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(124,92,255,0.3);
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card img {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        background: #333;
+    }
+
+    .card-content {
+        padding: 15px;
+    }
+
+    .card h3 {
+        margin: 0 0 10px;
+        font-size: 18px;
+    }
+
+    .copy-btn {
+        width: 100%;
+        padding: 10px;
+        background: #00e5ff;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        color: #000;
+        font-weight: bold;
+    }
+</style>
 </head>
-<body class="min-h-screen pb-20">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-[#101010]/90 backdrop-blur-md border-b border-white/5 px-6 py-5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-code text-white"></i>
-                </div>
-                <h1 class="text-2xl font-black tracking-tighter bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                    SCRIPT HUB
-                </h1>
-            </div>
-            
-            <div class="relative w-full md:w-[450px]">
-                <input id="searchInput" type="text" placeholder="輸入遊戲名稱或關鍵字..." 
-                    class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-3 pl-12 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
-                <button onclick="fetchScripts()" class="absolute right-3 top-1.5 bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-xl text-xs font-bold transition-colors">
-                    搜尋
-                </button>
-            </div>
-        </div>
-    </nav>
+<header>🔎 Script 搜尋站</header>
 
-    <main class="max-w-7xl mx-auto px-6 mt-12">
-        <div id="loader" class="flex flex-col items-center justify-center py-32 space-y-4">
-            <div class="custom-loader"></div>
-            <p class="text-gray-500 animate-pulse text-sm">正在從 ScriptBlox 獲取腳本...</p>
-        </div>
+<div class="search-box">
+    <input id="searchInput" placeholder="搜尋腳本..." />
+    <button onclick="searchScripts()">搜尋</button>
+</div>
 
-        <div id="scriptGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            </div>
+<div class="grid" id="grid"></div>
 
-        <div id="noResult" class="hidden text-center py-32">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-white/5 rounded-full mb-6">
-                <i class="fas fa-ghost text-4xl text-gray-600"></i>
-            </div>
-            <h2 class="text-xl font-bold text-white mb-2">空空如也</h2>
-            <p class="text-gray-500">找不到相關腳本，請試試其他關鍵字。</p>
-        </div>
-    </main>
+<script>
+const grid = document.getElementById("grid")
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black font-bold px-8 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] opacity-0 transition-all duration-300 translate-y-10 pointer-events-none z-[100] flex items-center gap-3">
-        <i class="fas fa-check-circle text-green-500"></i>
-        <span>腳本複製成功！</span>
-    </div>
+async function loadHome() {
+    grid.innerHTML = ""
+    const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20")
+    const data = await res.json()
+    renderScripts(data.result.scripts)
+}
 
-    <script>
-        const scriptGrid = document.getElementById('scriptGrid');
-        const searchInput = document.getElementById('searchInput');
-        const loader = document.getElementById('loader');
-        const noResult = document.getElementById('noResult');
-        const toast = document.getElementById('toast');
+async function searchScripts() {
+    const q = document.getElementById("searchInput").value.trim()
+    if (!q) return loadHome()
 
-        // 監聽 Enter 鍵
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') fetchScripts();
-        });
+    grid.innerHTML = ""
+    const res = await fetch(`https://scriptblox.com/api/script/search?q=${encodeURIComponent(q)}`)
+    const data = await res.json()
+    renderScripts(data.result.scripts)
+}
 
-        // 核心對接邏輯
-        async function fetchScripts() {
-            const query = searchInput.value.trim();
-            
-            // 使用 corsproxy.io 作為穩定轉發服務
-            const apiBase = query 
-                ? `https://scriptblox.com/api/search?q=${encodeURIComponent(query)}&page=1`
-                : `https://scriptblox.com/api/fetch?page=1`;
+function renderScripts(scripts) {
+    scripts.forEach(script => {
+        const card = document.createElement("div")
+        card.className = "card"
 
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(apiBase)}`;
+        const img = document.createElement("img")
+        img.src = script.game?.imageUrl || "https://via.placeholder.com/400x200?text=No+Image"
 
-            // UI 初始化
-            scriptGrid.innerHTML = '';
-            loader.classList.remove('hidden');
-            noResult.classList.add('hidden');
+        const content = document.createElement("div")
+        content.className = "card-content"
 
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error("代理伺服器響應失敗");
-                
-                const data = await response.json();
-                const scripts = data.result.scripts || [];
+        const title = document.createElement("h3")
+        title.textContent = script.title
 
-                loader.classList.add('hidden');
-
-                if (scripts.length === 0) {
-                    noResult.classList.remove('hidden');
-                    return;
-                }
-
-                scripts.forEach(item => {
-                    const card = createCard(item);
-                    scriptGrid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                loader.classList.add('hidden');
-                scriptGrid.innerHTML = `
-                    <div class="col-span-full text-center p-10 border border-red-500/20 rounded-2xl bg-red-500/5">
-                        <i class="fas fa-exclamation-triangle text-red-500 text-3xl mb-4"></i>
-                        <p class="text-red-400 font-medium">數據抓取失敗：${error.message}</p>
-                        <p class="text-gray-500 text-sm mt-2">請確認您的網絡連線，或稍後再試。</p>
-                    </div>
-                `;
-            }
+        const btn = document.createElement("button")
+        btn.className = "copy-btn"
+        btn.textContent = "📋 複製腳本"
+        btn.onclick = () => {
+            navigator.clipboard.writeText(script.script)
+            btn.textContent = "✅ 已複製"
+            setTimeout(() => btn.textContent = "📋 複製腳本", 1500)
         }
 
-        // 生成卡片 HTML
-        function createCard(item) {
-            // 處理圖片路徑
-            const thumb = item.game.imageUrl 
-                ? (item.game.imageUrl.startsWith('http') ? item.game.imageUrl : `https://scriptblox.com${item.game.imageUrl}`)
-                : 'https://via.placeholder.com/150/222/fff?text=No+Image';
+        content.appendChild(title)
+        content.appendChild(btn)
 
-            const div = document.createElement('div');
-            div.className = 'glass-card rounded-3xl p-6 flex flex-col h-full';
-            
-            div.innerHTML = `
-                <div class="flex-grow">
-                    <div class="relative mb-5 group">
-                        <img src="${thumb}" class="w-full h-40 object-cover rounded-2xl border border-white/5" alt="game icon">
-                        <div class="absolute top-3 right-3 flex gap-2">
-                            ${item.verified ? '<span class="bg-blue-500 text-white text-[10px] font-black px-2 py-1 rounded-lg shadow-lg">VERIFIED</span>' : ''}
-                            <span class="bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-lg border border-white/10 uppercase font-bold">${item.scriptType}</span>
-                        </div>
-                    </div>
-                    
-                    <h3 class="text-lg font-bold text-white mb-1 line-clamp-1">${item.title}</h3>
-                    <p class="text-gray-500 text-xs mb-4 flex items-center gap-1">
-                        <i class="fas fa-gamepad"></i> ${item.game.name}
-                    </p>
-                    
-                    <div class="flex flex-wrap gap-2 mb-6">
-                        <div class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[11px] text-gray-400">
-                            <i class="far fa-eye mr-1"></i> ${item.views}
-                        </div>
-                        <div class="bg-white/5 border border-white/10 px-3 py-1 rounded-full text-[11px] text-gray-400">
-                            <i class="far fa-calendar-alt mr-1"></i> ${new Date(item.createdAt).toLocaleDateString()}
-                        </div>
-                    </div>
-                </div>
+        card.appendChild(img)
+        card.appendChild(content)
+        grid.appendChild(card)
+    })
+}
 
-                <button onclick="copyToClipboard(this, \`${item.script.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" 
-                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg shadow-blue-600/20">
-                    <i class="far fa-copy text-lg"></i>
-                    <span>複製腳本代碼</span>
-                </button>
-            `;
-            return div;
-        }
+// 預設載入主頁
+loadHome()
+</script>
 
-        // 複製與 Toast 邏輯
-        function copyToClipboard(btn, text) {
-            const originalContent = btn.innerHTML;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                // 按鈕視覺反饋
-                btn.classList.replace('bg-blue-600', 'bg-green-600');
-                btn.innerHTML = `<i class="fas fa-check"></i> 成功複製`;
-                
-                // 顯示 Toast
-                toast.classList.remove('opacity-0', 'translate-y-10');
-                toast.classList.add('opacity-100', 'translate-y-0');
-
-                setTimeout(() => {
-                    btn.classList.replace('bg-green-600', 'bg-blue-600');
-                    btn.innerHTML = originalContent;
-                    toast.classList.add('opacity-0', 'translate-y-10');
-                    toast.classList.remove('opacity-100', 'translate-y-0');
-                }, 2500);
-            }).catch(err => {
-                alert('複製失敗，請手動複製代碼。');
-            });
-        }
-
-        // 初始加載
-        fetchScripts();
-    </script>
 </body>
 </html>
