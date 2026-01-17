@@ -1,153 +1,253 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>極簡深色 UI 設計</title>
-    <style>
-        /* 全域樣式設定 - 去除 AI 裝飾味 */
-        body {
-            background-color: #101010;
-            color: #e0e0e0;
-            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
+<meta charset="UTF-8">
+<title>Script Search - Ultra Dark</title>
 
-        .container {
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-        }
+<style>
+    /* 101010 全深 UI */
+    body {
+        margin: 0;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #101010;
+        color: #e0e0e0;
+    }
 
-        /* 搜尋欄樣式 */
-        .search-container {
-            margin-bottom: 40px;
-        }
+    /* 導航欄與搜尋框 */
+    .search-bar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #101010;
+        padding: 24px;
+        /* 去除過時的藍色邊框，改為低調的深灰 */
+        border-bottom: 1px solid #222;
+    }
 
-        input[type="text"] {
-            width: 100%;
-            padding: 12px 20px;
-            background-color: #1a1a1a;
-            border: 2px solid #333;
-            border-radius: 25px; /* 圓角樣式 */
-            color: #fff;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
+    .search-box {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        max-width: 700px;
+        margin: 0 auto;
+    }
 
-        /* 搜尋欄黃色發亮邊框 */
-        input[type="text"]:focus {
-            border-color: #ffcc00;
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.5), inset 0 0 5px rgba(255, 204, 0, 0.2);
-        }
+    /* 搜尋欄黃色邊框發亮 */
+    .search-box input {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 25px; /* 圓角樣式 */
+        border: 1px solid #333;
+        background: #1a1a1a;
+        color: #fff;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.3s ease;
+    }
 
-        /* 按鈕樣式 - 灰色圓角 */
-        .btn {
-            background-color: #444;
-            color: #fff;
-            border: 2px solid transparent;
-            padding: 10px 25px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin: 10px;
-        }
+    .search-box input:focus {
+        border-color: #ffcc00;
+        box-shadow: 0 0 12px rgba(255, 204, 0, 0.4);
+    }
 
-        /* 按鈕黃色發亮邊框 */
-        .btn:hover {
-            background-color: #555;
-            border-color: #ffcc00;
-            box-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
-        }
+    /* 按鈕：灰色圓角與黃色發亮 */
+    .btn-action {
+        padding: 12px 24px;
+        border-radius: 25px; /* 圓角樣式 */
+        border: 1px solid transparent;
+        background: #2a2a2a; /* 灰色主體 */
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
 
-        /* 圖片交互式動畫 (放大) */
-        .gallery {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
+    .btn-action:hover {
+        border-color: #ffcc00;
+        box-shadow: 0 0 12px rgba(255, 204, 0, 0.5);
+        background: #333;
+    }
 
-        .image-card {
-            overflow: hidden;
-            border-radius: 12px;
-            width: 200px;
-            height: 150px;
-            background-color: #222;
-        }
+    /* 網格佈局 */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-        .image-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease; /* 平滑放大動畫 */
-        }
+    /* 腳本卡片樣式 */
+    .card {
+        background: #181818;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 320px;
+        border: 1px solid #222;
+        transition: transform 0.3s ease;
+    }
 
-        .image-card:hover img {
-            transform: scale(1.15); /* 圖片放大 */
-        }
+    /* 圖片放大交互動畫 */
+    .preview {
+        height: 160px;
+        width: 100%;
+        overflow: hidden; /* 裁剪縮放出的部分 */
+        background: #080808;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        h1 {
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-        }
-    </style>
+    .preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 改為 cover 讓放大效果更震撼 */
+        transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .card:hover .preview img {
+        transform: scale(1.15); /* 圖片放大 15% */
+    }
+
+    .preview .fallback {
+        font-size: 32px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .card-content {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* 複製按鈕繼承灰色圓角黃邊樣式 */
+    .copy-btn {
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid #444;
+        background: #2a2a2a;
+        color: #eee;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+        border-color: #ffcc00;
+        box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+        color: #fff;
+    }
+</style>
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>探索內容</h1>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="輸入關鍵字後按 Enter 搜尋...">
-        </div>
-
-        <div>
-            <button class="btn" onclick="handleSearch()">執行搜尋</button>
-            <button class="btn">重設頁面</button>
-        </div>
-
-        <div class="gallery">
-            <div class="image-card">
-                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400" alt="示範圖片1">
-            </div>
-            <div class="image-card">
-                <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400" alt="示範圖片2">
-            </div>
-            <div class="image-card">
-                <img src="https://images.unsplash.com/photo-1579546678183-a94ad1488e59?w=400" alt="示範圖片3">
-            </div>
-        </div>
+<div class="search-bar">
+    <div class="search-box">
+        <input id="searchInput" placeholder="Search scripts..." onkeydown="if(event.key === 'Enter') searchScripts()" />
+        <button class="btn-action" onclick="searchScripts()">Search</button>
     </div>
+</div>
 
-    <script>
-        // 搜尋邏輯
-        function handleSearch() {
-            const query = document.getElementById('searchInput').value;
-            if (query) {
-                alert('正在搜尋：' + query);
-            } else {
-                alert('請輸入內容');
+<div class="grid" id="grid"></div>
+
+<script>
+/* --- API 邏輯完全保留 --- */
+const grid = document.getElementById("grid")
+
+async function loadHome() {
+    grid.innerHTML = ""
+    const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20")
+    const data = await res.json()
+    renderScripts(data.result.scripts)
+}
+
+async function searchScripts() {
+    const q = document.getElementById("searchInput").value.trim()
+    if (!q) {
+        loadHome()
+        return
+    }
+
+    grid.innerHTML = ""
+    const res = await fetch(
+        "https://scriptblox.com/api/script/search?q=" + encodeURIComponent(q)
+    )
+    const data = await res.json()
+    renderScripts(data.result.scripts)
+}
+
+function renderScripts(scripts) {
+    scripts.forEach(script => {
+        const card = document.createElement("div")
+        card.className = "card"
+
+        const preview = document.createElement("div")
+        preview.className = "preview"
+
+        if (script.game && script.game.imageUrl) {
+            const img = document.createElement("img")
+            img.src = script.game.imageUrl
+            img.onerror = () => {
+                preview.innerHTML = '<div class="fallback">404</div>'
             }
+            preview.appendChild(img)
+        } else {
+            preview.innerHTML = '<div class="fallback">404</div>'
         }
 
-        // 監聽 Enter 鍵
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
-        });
-    </script>
+        const content = document.createElement("div")
+        content.className = "card-content"
+
+        const title = document.createElement("div")
+        title.className = "title"
+        title.textContent = script.title || "Untitled Script"
+
+        const btn = document.createElement("button")
+        btn.className = "copy-btn"
+        btn.textContent = "Copy Script"
+        btn.onclick = () => {
+            navigator.clipboard.writeText(script.script || "")
+            btn.textContent = "Copied!"
+            btn.style.borderColor = "#ffcc00" // 複製成功的小回饋
+            setTimeout(() => {
+                btn.textContent = "Copy Script"
+                btn.style.borderColor = "#444"
+            }, 1500)
+        }
+
+        content.appendChild(title)
+        content.appendChild(btn)
+
+        card.appendChild(preview)
+        card.appendChild(content)
+        grid.appendChild(card)
+    })
+}
+
+loadHome()
+</script>
 
 </body>
 </html>
