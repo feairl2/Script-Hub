@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Script 搜尋站</title>
+<title>Script Search</title>
 
 <style>
     body {
         margin: 0;
-        font-family: "Segoe UI", Arial, sans-serif;
+        font-family: Arial, Helvetica, sans-serif;
         background: #0e0e0e;
         color: #ffffff;
     }
@@ -17,7 +17,7 @@
         text-align: center;
         font-size: 28px;
         font-weight: bold;
-        background: linear-gradient(90deg, #7c5cff, #00e5ff);
+        background: linear-gradient(90deg, #4f7cff, #00b3ff);
     }
 
     .search-box {
@@ -40,7 +40,7 @@
         padding: 12px 20px;
         border-radius: 8px;
         border: none;
-        background: #7c5cff;
+        background: #4f7cff;
         color: white;
         font-size: 16px;
         cursor: pointer;
@@ -53,41 +53,61 @@
         padding: 20px;
     }
 
+    /* Card */
     .card {
         background: #1a1a1a;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 0 15px rgba(124, 92, 255, 0.35);
-        transition: transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        height: 360px; /* 🔒 Fixed size */
+        box-shadow: 0 0 14px rgba(79, 124, 255, 0.35);
     }
 
-    .card:hover {
-        transform: translateY(-6px);
-    }
-
-    .card img {
-        width: 100%;
+    /* Image or 404 area */
+    .preview {
         height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0a2cff;
+        font-size: 48px;
+        font-weight: bold;
+        color: white;
+        user-select: none;
+    }
+
+    .preview img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        background: #222;
+        display: block;
     }
 
     .card-content {
         padding: 15px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
 
     .card h3 {
-        margin: 0 0 12px;
         font-size: 18px;
-        line-height: 1.2em;
+        margin: 0;
+        line-height: 1.25em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
+    /* Copy button fixed at bottom */
     .copy-btn {
-        width: 100%;
-        padding: 10px;
+        margin-top: auto;
+        padding: 12px;
         border-radius: 8px;
         border: none;
-        background: #00e5ff;
+        background: #00c2ff;
         color: #000;
         font-size: 15px;
         font-weight: bold;
@@ -98,11 +118,11 @@
 
 <body>
 
-<header>🔎 Script 搜尋站</header>
+<header>Script Search</header>
 
 <div class="search-box">
-    <input id="searchInput" placeholder="搜尋腳本..." />
-    <button onclick="searchScripts()">搜尋</button>
+    <input id="searchInput" placeholder="Search scripts..." />
+    <button onclick="searchScripts()">Search</button>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -110,7 +130,6 @@
 <script>
 const grid = document.getElementById("grid")
 
-// 載入主頁腳本
 async function loadHome() {
     grid.innerHTML = ""
     const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20")
@@ -118,7 +137,6 @@ async function loadHome() {
     renderScripts(data.result.scripts)
 }
 
-// 搜尋腳本
 async function searchScripts() {
     const q = document.getElementById("searchInput").value.trim()
     if (!q) {
@@ -134,17 +152,27 @@ async function searchScripts() {
     renderScripts(data.result.scripts)
 }
 
-// 渲染腳本卡片
 function renderScripts(scripts) {
     scripts.forEach(script => {
         const card = document.createElement("div")
         card.className = "card"
 
-        const img = document.createElement("img")
+        /* Preview area */
+        const preview = document.createElement("div")
+        preview.className = "preview"
 
-        // ✅ 直接寫 404
-        img.src = script.game?.imageUrl || "404"
-        img.onerror = () => img.src = "404"
+        if (script.game && script.game.imageUrl) {
+            const img = document.createElement("img")
+            img.src = script.game.imageUrl
+
+            img.onerror = () => {
+                preview.textContent = "404"
+            }
+
+            preview.appendChild(img)
+        } else {
+            preview.textContent = "404"
+        }
 
         const content = document.createElement("div")
         content.className = "card-content"
@@ -154,25 +182,24 @@ function renderScripts(scripts) {
 
         const btn = document.createElement("button")
         btn.className = "copy-btn"
-        btn.textContent = "📋 複製腳本"
+        btn.textContent = "Copy Script"
         btn.onclick = () => {
             navigator.clipboard.writeText(script.script || "")
-            btn.textContent = "✅ 已複製"
+            btn.textContent = "Copied!"
             setTimeout(() => {
-                btn.textContent = "📋 複製腳本"
+                btn.textContent = "Copy Script"
             }, 1500)
         }
 
         content.appendChild(title)
         content.appendChild(btn)
 
-        card.appendChild(img)
+        card.appendChild(preview)
         card.appendChild(content)
         grid.appendChild(card)
     })
 }
 
-// 預設載入
 loadHome()
 </script>
 
