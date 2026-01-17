@@ -12,23 +12,26 @@
         color: #ffffff;
     }
 
-    header {
-        padding: 20px;
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-        background: linear-gradient(90deg, #4f7cff, #00b3ff);
+    /* Top search bar */
+    .search-bar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #0e0e0e;
+        padding: 16px;
+        border-bottom: 1px solid rgba(127, 212, 255, 0.3);
     }
 
     .search-box {
         display: flex;
         justify-content: center;
         gap: 10px;
-        margin: 20px;
+        max-width: 700px;
+        margin: 0 auto;
     }
 
     .search-box input {
-        width: 320px;
+        flex: 1;
         padding: 12px;
         border-radius: 8px;
         border: none;
@@ -40,10 +43,12 @@
         padding: 12px 20px;
         border-radius: 8px;
         border: none;
-        background: #4f7cff;
-        color: white;
+        background: #7fd4ff;
+        color: #002033;
         font-size: 16px;
+        font-weight: bold;
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .grid {
@@ -60,20 +65,20 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        height: 360px; /* 🔒 Fixed size */
-        box-shadow: 0 0 14px rgba(79, 124, 255, 0.35);
+        height: 260px; /* ⬅ shorter */
+        box-shadow: 0 0 14px rgba(127, 212, 255, 0.35);
     }
 
     /* Image or 404 area */
     .preview {
-        height: 140px;
+        height: 110px; /* ⬅ shorter */
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #0a2cff;
-        font-size: 48px;
+        background: #7fd4ff;
+        font-size: 40px;
         font-weight: bold;
-        color: white;
+        color: #002033;
         user-select: none;
     }
 
@@ -85,31 +90,21 @@
     }
 
     .card-content {
-        padding: 15px;
+        padding: 12px;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .card h3 {
-        font-size: 18px;
-        margin: 0;
-        line-height: 1.25em;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-    }
-
     /* Copy button fixed at bottom */
     .copy-btn {
         margin-top: auto;
-        padding: 12px;
+        padding: 10px;
         border-radius: 8px;
         border: none;
-        background: #00c2ff;
-        color: #000;
-        font-size: 15px;
+        background: #7fd4ff;
+        color: #002033;
+        font-size: 14px;
         font-weight: bold;
         cursor: pointer;
     }
@@ -118,11 +113,11 @@
 
 <body>
 
-<header>Script Search</header>
-
-<div class="search-box">
-    <input id="searchInput" placeholder="Search scripts..." />
-    <button onclick="searchScripts()">Search</button>
+<div class="search-bar">
+    <div class="search-box">
+        <input id="searchInput" placeholder="Search scripts..." />
+        <button onclick="searchScripts()">Search</button>
+    </div>
 </div>
 
 <div class="grid" id="grid"></div>
@@ -157,18 +152,15 @@ function renderScripts(scripts) {
         const card = document.createElement("div")
         card.className = "card"
 
-        /* Preview area */
         const preview = document.createElement("div")
         preview.className = "preview"
 
         if (script.game && script.game.imageUrl) {
             const img = document.createElement("img")
             img.src = script.game.imageUrl
-
             img.onerror = () => {
                 preview.textContent = "404"
             }
-
             preview.appendChild(img)
         } else {
             preview.textContent = "404"
@@ -176,9 +168,6 @@ function renderScripts(scripts) {
 
         const content = document.createElement("div")
         content.className = "card-content"
-
-        const title = document.createElement("h3")
-        title.textContent = script.title || "Untitled Script"
 
         const btn = document.createElement("button")
         btn.className = "copy-btn"
@@ -191,7 +180,6 @@ function renderScripts(scripts) {
             }, 1500)
         }
 
-        content.appendChild(title)
         content.appendChild(btn)
 
         card.appendChild(preview)
