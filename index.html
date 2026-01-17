@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>Script 搜尋站</title>
+
 <style>
     body {
         margin: 0;
-        font-family: "Segoe UI", Arial;
+        font-family: "Segoe UI", Arial, sans-serif;
         background: #0e0e0e;
-        color: #fff;
+        color: #ffffff;
     }
 
     header {
@@ -22,22 +23,23 @@
     .search-box {
         display: flex;
         justify-content: center;
-        margin: 20px;
         gap: 10px;
+        margin: 20px;
     }
 
     .search-box input {
-        width: 300px;
+        width: 320px;
         padding: 12px;
         border-radius: 8px;
         border: none;
         font-size: 16px;
+        outline: none;
     }
 
     .search-box button {
         padding: 12px 20px;
-        border: none;
         border-radius: 8px;
+        border: none;
         background: #7c5cff;
         color: white;
         font-size: 16px;
@@ -55,19 +57,19 @@
         background: #1a1a1a;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 0 15px rgba(124,92,255,0.3);
-        transition: transform 0.2s;
+        box-shadow: 0 0 15px rgba(124, 92, 255, 0.35);
+        transition: transform 0.2s ease;
     }
 
     .card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-6px);
     }
 
     .card img {
         width: 100%;
         height: 140px;
         object-fit: cover;
-        background: #333;
+        background: #222;
     }
 
     .card-content {
@@ -75,23 +77,25 @@
     }
 
     .card h3 {
-        margin: 0 0 10px;
+        margin: 0 0 12px;
         font-size: 18px;
+        line-height: 1.2em;
     }
 
     .copy-btn {
         width: 100%;
         padding: 10px;
-        background: #00e5ff;
-        border: none;
         border-radius: 8px;
-        font-size: 15px;
-        cursor: pointer;
+        border: none;
+        background: #00e5ff;
         color: #000;
+        font-size: 15px;
         font-weight: bold;
+        cursor: pointer;
     }
 </style>
 </head>
+
 <body>
 
 <header>🔎 Script 搜尋站</header>
@@ -106,6 +110,7 @@
 <script>
 const grid = document.getElementById("grid")
 
+// 載入主頁腳本
 async function loadHome() {
     grid.innerHTML = ""
     const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20")
@@ -113,16 +118,23 @@ async function loadHome() {
     renderScripts(data.result.scripts)
 }
 
+// 搜尋腳本
 async function searchScripts() {
     const q = document.getElementById("searchInput").value.trim()
-    if (!q) return loadHome()
+    if (!q) {
+        loadHome()
+        return
+    }
 
     grid.innerHTML = ""
-    const res = await fetch(`https://scriptblox.com/api/script/search?q=${encodeURIComponent(q)}`)
+    const res = await fetch(
+        "https://scriptblox.com/api/script/search?q=" + encodeURIComponent(q)
+    )
     const data = await res.json()
     renderScripts(data.result.scripts)
 }
 
+// 渲染腳本卡片
 function renderScripts(scripts) {
     scripts.forEach(script => {
         const card = document.createElement("div")
@@ -130,13 +142,9 @@ function renderScripts(scripts) {
 
         const img = document.createElement("img")
 
-        // 嘗試使用 ScriptBlox 回傳的遊戲圖片
-        img.src = script.game?.imageUrl || "https://scriptblox.com/images/404.png"
-
-        // 如果圖片 404 / 載入失敗 → 換成 ScriptBlox 預設 404 圖
-        img.onerror = () => {
-            img.src = "https://scriptblox.com/images/404.png"
-        }
+        // ✅ 直接寫 404
+        img.src = script.game?.imageUrl || "404"
+        img.onerror = () => img.src = "404"
 
         const content = document.createElement("div")
         content.className = "card-content"
@@ -150,7 +158,9 @@ function renderScripts(scripts) {
         btn.onclick = () => {
             navigator.clipboard.writeText(script.script || "")
             btn.textContent = "✅ 已複製"
-            setTimeout(() => btn.textContent = "📋 複製腳本", 1500)
+            setTimeout(() => {
+                btn.textContent = "📋 複製腳本"
+            }, 1500)
         }
 
         content.appendChild(title)
@@ -162,7 +172,7 @@ function renderScripts(scripts) {
     })
 }
 
-// 預設載入主頁
+// 預設載入
 loadHome()
 </script>
 
