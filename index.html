@@ -296,6 +296,31 @@
         }
 
         loadHome();
+
+::-webkit-scrollbar {
+    width: 8px;  /* 寬度變窄，更顯精緻 */
+    height: 8px; /* 橫向捲動條高度 */
+}
+
+/* 2. 捲動條軌道 (背景) */
+::-webkit-scrollbar-track {
+    background: #101010; /* 與主體背景一致 */
+}
+
+/* 3. 捲動條滑塊 (拉條本體) */
+::-webkit-scrollbar-thumb {
+    background: #333; /* 灰色主體，呼叫按鈕顏色 */
+    border-radius: 10px; /* 圓角 */
+    border: 2px solid #101010; /* 利用邊框製造縮排感 */
+    transition: background 0.3s;
+}
+
+/* 4. 當滑鼠懸停在滑塊上時 (呼應黃色發亮邏輯) */
+::-webkit-scrollbar-thumb:hover {
+    background: #ffcc00; /* 懸停時變黃色 */
+    box-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+}
+        
     </script>
 </body>
 </html>
