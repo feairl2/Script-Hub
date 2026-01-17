@@ -129,19 +129,26 @@ function renderScripts(scripts) {
         card.className = "card"
 
         const img = document.createElement("img")
-        img.src = script.game?.imageUrl || "https://via.placeholder.com/400x200?text=No+Image"
+
+        // 嘗試使用 ScriptBlox 回傳的遊戲圖片
+        img.src = script.game?.imageUrl || "https://scriptblox.com/images/404.png"
+
+        // 如果圖片 404 / 載入失敗 → 換成 ScriptBlox 預設 404 圖
+        img.onerror = () => {
+            img.src = "https://scriptblox.com/images/404.png"
+        }
 
         const content = document.createElement("div")
         content.className = "card-content"
 
         const title = document.createElement("h3")
-        title.textContent = script.title
+        title.textContent = script.title || "Untitled Script"
 
         const btn = document.createElement("button")
         btn.className = "copy-btn"
         btn.textContent = "📋 複製腳本"
         btn.onclick = () => {
-            navigator.clipboard.writeText(script.script)
+            navigator.clipboard.writeText(script.script || "")
             btn.textContent = "✅ 已複製"
             setTimeout(() => btn.textContent = "📋 複製腳本", 1500)
         }
