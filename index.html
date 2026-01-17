@@ -65,19 +65,17 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        height: 260px; /* ⬅ shorter */
+        height: 300px;
         box-shadow: 0 0 14px rgba(127, 212, 255, 0.35);
     }
 
     /* Image or 404 area */
     .preview {
-        height: 110px; /* ⬅ shorter */
+        height: 160px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: #7fd4ff;
-        font-size: 40px;
-        font-weight: bold;
         color: #002033;
         user-select: none;
     }
@@ -85,8 +83,14 @@
     .preview img {
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: contain; /* ✅ show full image */
+        background: #7fd4ff;
         display: block;
+    }
+
+    .preview .fallback {
+        font-size: 48px;
+        font-weight: bold;
     }
 
     .card-content {
@@ -94,6 +98,16 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+        gap: 8px;
+    }
+
+    .title {
+        font-size: 15px;
+        line-height: 1.25em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     /* Copy button fixed at bottom */
@@ -159,15 +173,19 @@ function renderScripts(scripts) {
             const img = document.createElement("img")
             img.src = script.game.imageUrl
             img.onerror = () => {
-                preview.textContent = "404"
+                preview.innerHTML = '<div class="fallback">404</div>'
             }
             preview.appendChild(img)
         } else {
-            preview.textContent = "404"
+            preview.innerHTML = '<div class="fallback">404</div>'
         }
 
         const content = document.createElement("div")
         content.className = "card-content"
+
+        const title = document.createElement("div")
+        title.className = "title"
+        title.textContent = script.title || "Untitled Script"
 
         const btn = document.createElement("button")
         btn.className = "copy-btn"
@@ -180,6 +198,7 @@ function renderScripts(scripts) {
             }, 1500)
         }
 
+        content.appendChild(title)
         content.appendChild(btn)
 
         card.appendChild(preview)
