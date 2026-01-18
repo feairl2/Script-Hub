@@ -38,7 +38,7 @@
             line-height: 1.5;
         }
 
-        /* --- 2. 搜尋欄區域 (101010 + 黃光) --- */
+        /* --- 2. 搜尋欄區域 --- */
         .header {
             position: sticky;
             top: 0;
@@ -91,7 +91,7 @@
             box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
         }
 
-        /* --- 3. 緊湊型網格佈局 --- */
+        /* --- 3. 佈局 --- */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -102,7 +102,7 @@
             transition: opacity 0.3s ease;
         }
 
-        /* --- 4. 卡片設計與動畫 --- */
+        /* --- 4. 卡片設計 --- */
         .card {
             background: var(--card-dark);
             border: 1px solid #222;
@@ -128,7 +128,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            position: relative; /* 為了讓標籤絕對定位 */
         }
 
         .preview img {
@@ -138,9 +138,24 @@
             transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
         }
 
-        /* 圖片放大動畫 */
         .card:hover .preview img {
             transform: scale(1.12);
+        }
+
+        /* Key System 標籤樣式 */
+        .key-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: var(--accent-yellow);
+            color: #000;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            z-index: 5;
         }
 
         .card-content {
@@ -162,7 +177,6 @@
             height: 40px;
         }
 
-        /* 遊戲判斷標籤 (灰色文字 + 黃點) */
         .game-info {
             font-size: 12px;
             color: var(--text-gray);
@@ -184,7 +198,6 @@
             flex-shrink: 0;
         }
 
-        /* 複製按鈕 (灰色圓角 + 黃邊發亮) */
         .copy-btn {
             margin-top: auto;
             width: 100%;
@@ -220,7 +233,6 @@
     <script>
         const grid = document.getElementById("grid");
 
-        // API 載入首頁
         async function loadHome() {
             try {
                 const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20");
@@ -231,10 +243,9 @@
             }
         }
 
-        // 搜尋邏輯 (API 串接 + 動畫回饋)
         async function searchScripts() {
             const q = document.getElementById("searchInput").value.trim();
-            grid.style.opacity = "0"; // 搜尋時切換動畫
+            grid.style.opacity = "0";
             
             setTimeout(async () => {
                 const url = q 
@@ -252,27 +263,32 @@
             }, 250);
         }
 
-        // 渲染函數
         function renderScripts(scripts) {
             grid.innerHTML = "";
             scripts.forEach((script, index) => {
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.animationDelay = `${index * 0.04}s`; // 逐一顯示
+                card.style.animationDelay = `${index * 0.04}s`;
 
                 const preview = document.createElement("div");
                 preview.className = "preview";
 
-                // 圖片處理邏輯
+                // 圖片處理
                 if (script.game && script.game.imageUrl) {
                     const img = document.createElement("img");
                     img.src = script.game.imageUrl.startsWith('http') 
                         ? script.game.imageUrl 
                         : "https://scriptblox.com" + script.game.imageUrl;
-                    
-                    // 圖片報錯則隱藏，維持背景色，不顯示 404 文字
                     img.onerror = () => { img.style.display = 'none'; }; 
                     preview.appendChild(img);
+                }
+
+                // --- 新增：判斷 Key System 並標註 ---
+                if (script.key) {
+                    const keyBadge = document.createElement("div");
+                    keyBadge.className = "key-badge";
+                    keyBadge.textContent = "Key"; // 顯示文字可以縮短為 Key 更有質感
+                    preview.appendChild(keyBadge);
                 }
 
                 const content = document.createElement("div");
@@ -282,14 +298,9 @@
                 title.className = "title";
                 title.textContent = script.title || "Untitled";
 
-                // 遊戲/通用 判斷標籤
                 const gameInfo = document.createElement("div");
                 gameInfo.className = "game-info";
-                if (script.game && script.game.name) {
-                    gameInfo.textContent = script.game.name;
-                } else {
-                    gameInfo.textContent = "Universal";
-                }
+                gameInfo.textContent = (script.game && script.game.name) ? script.game.name : "Universal";
 
                 const copyBtn = document.createElement("button");
                 copyBtn.className = "copy-btn";
@@ -314,7 +325,6 @@
             });
         }
 
-        // 初始化載入
         loadHome();
     </script>
 </body>
