@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Script Hub | Ultra Professional Dark</title>
     <style>
-        /* --- 1. 基礎設定與捲動條美化 --- */
+        /* --- 1. 基礎設定 --- */
         :root {
             --bg-dark: #101010;
             --card-dark: #181818;
@@ -14,21 +14,10 @@
             --text-gray: #888888;
         }
 
-        /* 自定義捲動條 */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--bg-dark);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 10px;
-            border: 2px solid var(--bg-dark);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-yellow);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; border: 2px solid var(--bg-dark); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-yellow); }
 
         body {
             margin: 0;
@@ -38,7 +27,7 @@
             line-height: 1.5;
         }
 
-        /* --- 2. 搜尋欄區域 --- */
+        /* --- 2. 搜尋欄 --- */
         .header {
             position: sticky;
             top: 0;
@@ -86,11 +75,6 @@
             transition: all 0.3s ease;
         }
 
-        .btn-action:hover {
-            border-color: var(--accent-yellow);
-            box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
-        }
-
         /* --- 3. 佈局 --- */
         .grid {
             display: grid;
@@ -102,7 +86,7 @@
             transition: opacity 0.3s ease;
         }
 
-        /* --- 4. 卡片設計 --- */
+        /* --- 4. 卡片與圖片修復 --- */
         .card {
             background: var(--card-dark);
             border: 1px solid #222;
@@ -114,35 +98,33 @@
             opacity: 0;
             transform: translateY(15px);
             animation: cardAppear 0.4s forwards ease-out;
-            transition: border-color 0.3s;
         }
 
-        @keyframes cardAppear {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
 
         .preview {
             height: 120px;
             overflow: hidden;
-            background: #0d0d0d;
+            background: #050505; /* 深黑底色，防止 contain 產生白邊 */
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative; /* 為了讓標籤絕對定位 */
+            position: relative;
         }
 
         .preview img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+            /* 修正處：改為 contain 確保圖片完整不被裁剪 */
+            object-fit: contain; 
+            transition: transform 0.5s ease;
         }
 
+        /* 縮放動畫稍微調小，避免 contain 模式下邊緣閃爍 */
         .card:hover .preview img {
-            transform: scale(1.12);
+            transform: scale(1.05);
         }
 
-        /* Key System 標籤樣式 */
         .key-badge {
             position: absolute;
             bottom: 8px;
@@ -273,7 +255,6 @@
                 const preview = document.createElement("div");
                 preview.className = "preview";
 
-                // 圖片處理
                 if (script.game && script.game.imageUrl) {
                     const img = document.createElement("img");
                     img.src = script.game.imageUrl.startsWith('http') 
@@ -283,11 +264,11 @@
                     preview.appendChild(img);
                 }
 
-                // --- 新增：判斷 Key System 並標註 ---
+                // Key System 標記
                 if (script.key) {
                     const keyBadge = document.createElement("div");
                     keyBadge.className = "key-badge";
-                    keyBadge.textContent = "Key"; // 顯示文字可以縮短為 Key 更有質感
+                    keyBadge.textContent = "Key";
                     preview.appendChild(keyBadge);
                 }
 
