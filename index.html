@@ -29,28 +29,51 @@
 
         /* --- 2. 搜尋欄 --- */
         .header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: #0A0A0A;
-        backdrop-filter: none;
-        padding: 15px 20px;
-        border-bottom: none;
-        box-shadow: none;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.8); /* 增加一點點透明度 */
+            backdrop-filter: blur(10px); /* 磨砂玻璃效果 */
+            padding: 25px 20px;
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            align-items: center;
         }
 
         .search-container {
-    max-width: 520px;
-    margin: 0 auto;
-}
+            width: 100%;
+            max-width: 600px; /* 稍微加寬 */
+            position: relative;
+        }
 
         #searchInput {
-        width: 100%;
+            width: 100%;
+            padding: 12px 25px;
+            background: #151515;
+            border: 1px solid #252525;
+            border-radius: 30px; /* 圓角更圓潤 */
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box; /* 確保寬度包含內邊距 */
+        }
+
+        #searchInput::placeholder {
+            color: #555;
+            transition: color 0.3s;
         }
 
         #searchInput:focus {
             border-color: var(--accent-yellow);
-            box-shadow: 0 0 12px rgba(255, 204, 0, 0.25);
+            background: #1a1a1a;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.15), 
+                        0 0 40px rgba(255, 204, 0, 0.05);
+            transform: scale(1.02); /* 聚焦時輕微放大 */
+        }
+
+        #searchInput:focus::placeholder {
+            color: #888;
         }
 
         .btn-action {
