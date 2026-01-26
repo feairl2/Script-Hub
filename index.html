@@ -32,17 +32,21 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(10, 10, 10, 0.8); /* 增加一點點透明度 */
-            backdrop-filter: blur(10px); /* 磨砂玻璃效果 */
-            padding: 25px 20px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            /* 調整處：縮小上下 Padding，並設定最小高度 */
+            padding: 12px 20px; 
+            min-height: 40px;
             display: flex;
-            justify-content: center; /* 水平置中 */
+            justify-content: center;
             align-items: center;
+            /* 增加一條細微的底線，增加層次感 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .search-container {
             width: 100%;
-            max-width: 550px; /* 稍微加寬 */
+            max-width: 500px; /* 稍微縮小寬度，配合緊湊的高度 */
             position: relative;
         }
 
