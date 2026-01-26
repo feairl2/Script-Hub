@@ -40,9 +40,6 @@
         }
 
         .search-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
             max-width: 600px;
             margin: 0 auto;
         }
@@ -207,7 +204,6 @@
     <header class="header">
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search scripts..." onkeydown="if(event.key === 'Enter') searchScripts()">
-            <button class="btn-action" onclick="searchScripts()">Search</button>
         </div>
     </header>
 
