@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Hub | Compact Elite</title>
+    <title>Script Hub | Compact Elite Full</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -215,11 +215,6 @@
             font-size: 12px; cursor: pointer; transition: 0.2s;
         }
 
-        .card:hover .preview img {
-            opacity: 1;
-            transform: scale(1.05);
-        }
-
         .copy-btn:hover { background: #fff; color: #000; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -290,9 +285,21 @@
         }
 
         window.onclick = function(event) {
-            if (!event.target.matches('.filter-toggle') && !event.target.matches('.dropdown-menu') && !event.target.closest('.dropdown-menu')) {
+            if (!event.target.matches('.filter-toggle') && !event.target.closest('.dropdown-menu')) {
                 dropdownMenu.classList.remove("show");
                 filterBtn.classList.remove("active");
+            }
+        }
+
+        // 優化的單頁抓取函數
+        async function fetchSinglePage(url) {
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                return data.result.scripts || [];
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                return [];
             }
         }
 
@@ -302,59 +309,62 @@
             const keyFilter = document.getElementById("keyFilter").value;
             
             grid.classList.add("loading");
-            loaderBar.style.width = "30%";
+            loaderBar.style.width = "10%";
             
-            // 邏輯改動：如果搜尋框是空的，就抓首頁；有關鍵字就抓全部搜尋結果
-            let url = query 
-                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100&mode=free` 
-                : "https://scriptblox.com/api/script/fetch?page=1&max=100";
+            // 策略：連續抓取 5 頁（ScriptBlox API 每頁約 18-20 個）
+            // 這樣合併後會有近 100 個結果，且過濾後依然豐富
+            const pagesToFetch = 5;
+            let allScripts = [];
 
-            try {
-                loaderBar.style.width = "60%";
-                const res = await fetch(url);
-                const data = await res.json();
+            for (let i = 1; i <= pagesToFetch; i++) {
+                let url = query 
+                    ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&page=${i}&max=100` 
+                    : `https://scriptblox.com/api/script/fetch?page=${i}&max=100`;
                 
-                // 邏輯改動：確保 scripts 是一個陣列，防止報錯
-                let scripts = data.result.scripts || [];
-
-                // 邏輯改動：僅當使用者明確選擇「Universal」時才進行篩選
-                if (typeFilter === 'universal') {
-                    scripts = scripts.filter(s => 
-                        s.isUniversal === true || 
-                        (s.game && s.game.name.toLowerCase().includes("universal"))
-                    );
-                }
-
-                // 邏輯改動：Key 篩選器
-                if (keyFilter !== 'all') {
-                    scripts = scripts.filter(s => keyFilter === 'required' ? s.key : !s.key);
-                }
-
-                loaderBar.style.width = "90%";
-                renderScripts(scripts);
-            } catch (err) {
-                console.error(err);
-                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding: 50px; color:#555;'>Failed to load scripts.</div>";
-            } finally {
-                setTimeout(() => {
-                    loaderBar.style.width = "100%";
-                    setTimeout(() => { loaderBar.style.width = "0%"; }, 400);
-                    grid.classList.remove("loading");
-                }, 300);
+                const scripts = await fetchSinglePage(url);
+                allScripts = [...allScripts, ...scripts];
+                
+                // 更新進度條
+                loaderBar.style.width = `${(i / pagesToFetch) * 90}%`;
+                
+                // 如果抓到的數量為 0，代表沒後續了，提早結束
+                if (scripts.length === 0) break;
             }
+
+            // 根據 _id 去重，防止不同分頁出現重複內容
+            let uniqueScripts = Array.from(new Map(allScripts.map(item => [item._id, item])).values());
+
+            // 執行篩選
+            if (typeFilter === 'universal') {
+                uniqueScripts = uniqueScripts.filter(s => 
+                    s.isUniversal === true || (s.game && s.game.name.toLowerCase().includes("universal"))
+                );
+            }
+
+            if (keyFilter !== 'all') {
+                uniqueScripts = uniqueScripts.filter(s => keyFilter === 'required' ? s.key : !s.key);
+            }
+
+            renderScripts(uniqueScripts);
+
+            setTimeout(() => {
+                loaderBar.style.width = "100%";
+                setTimeout(() => { loaderBar.style.width = "0%"; }, 400);
+                grid.classList.remove("loading");
+            }, 300);
         }
 
         function renderScripts(scripts) {
             grid.innerHTML = "";
             if (scripts.length === 0) {
-                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding: 50px; color:#555;'>No scripts found.</div>";
+                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding: 50px; color:#555;'>No scripts match your filters.</div>";
                 return;
             }
 
             scripts.forEach((script, index) => {
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.animation = `fadeIn 0.4s ease forwards ${index * 0.02}s`;
+                card.style.animation = `fadeIn 0.4s ease forwards ${index * 0.01}s`;
 
                 let imgUrl = "https://scriptblox.com/images/no-image.png"; 
 
@@ -387,7 +397,7 @@
             setTimeout(() => btn.textContent = old, 1200);
         }
 
-        // 頁面加載時執行一次
+        // 啟動加載
         executeSearch();
     </script>
 </body>
