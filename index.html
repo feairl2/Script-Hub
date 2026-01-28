@@ -342,17 +342,22 @@
         card.className = "card";
         card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
 
-        // --- 優化後的圖片邏輯 ---
-        let imgUrl = "No Image.png"; // 預設使用本地圖
+        // 預設先給你的本地圖片
+        let imgUrl = "No Image.png"; 
 
         if (script.game && script.game.imageUrl) {
-            const remoteImg = script.game.imageUrl;
+            const rawUrl = script.game.imageUrl;
             
-            // 如果 API 回傳的圖片網址包含 'no-image.png'，我們就不使用它，維持使用本地圖
-            if (!remoteImg.includes("no-image.png")) {
-                imgUrl = remoteImg.startsWith('http') 
-                    ? remoteImg 
-                    : "https://scriptblox.com" + remoteImg;
+            // --- 強效過濾邏輯 ---
+            // 1. 檢查是否包含官方的 'no-image'
+            // 2. 檢查是否包含 'static' (通常是 404 佔位圖的路徑)
+            // 3. 檢查是否為 Universal (通常這種都沒有好圖)
+            const isInvalid = rawUrl.includes("no-image") || 
+                             rawUrl.includes("static") || 
+                             (script.game.name && script.game.name.toLowerCase() === "universal");
+
+            if (!isInvalid) {
+                imgUrl = rawUrl.startsWith('http') ? rawUrl : "https://scriptblox.com" + rawUrl;
             }
         }
 
