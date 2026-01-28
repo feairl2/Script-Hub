@@ -20,7 +20,21 @@
             font-family: 'Quicksand', 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: #ffffff;
-            font-size: 13px; /* 整體比例縮小 */
+            font-size: 13px; 
+            overflow-x: hidden;
+        }
+
+        /* --- 新增：頂部載入進度條 --- */
+        #loader-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--accent-yellow);
+            width: 0%;
+            z-index: 2000;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--accent-yellow);
         }
 
         /* --- 1. 精簡導航欄 --- */
@@ -40,7 +54,7 @@
             padding: 0 15px;
             display: flex;
             gap: 8px;
-            position: relative; /* 給懸浮選單定位 */
+            position: relative; 
         }
 
         .input-wrapper {
@@ -88,7 +102,7 @@
             color: var(--accent-yellow);
         }
 
-        /* --- 2. 懸浮下拉選單 (Floating Menu) --- */
+        /* --- 2. 懸浮下拉選單 --- */
         .dropdown-menu {
             position: absolute;
             top: calc(100% + 10px);
@@ -100,8 +114,6 @@
             padding: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             backdrop-filter: blur(15px);
-            
-            /* 動畫起始狀態 */
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
@@ -115,12 +127,8 @@
             transform: translateY(0);
         }
 
-        .filter-item {
-            margin-bottom: 10px;
-        }
-
+        .filter-item { margin-bottom: 10px; }
         .filter-item:last-child { margin-bottom: 0; }
-
         .filter-item label {
             display: block;
             font-size: 11px;
@@ -151,16 +159,25 @@
             padding: 25px 15px;
             max-width: 700px;
             margin: 0 auto;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        }
+
+        /* --- 新增：搜尋中的動畫狀態 --- */
+        .grid.loading {
+            opacity: 0.3;
+            transform: scale(0.98);
+            pointer-events: none;
         }
 
         .card {
             background: var(--card-dark);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: 0.3s ease;
-    display: flex;
-    flex-direction: column;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            opacity: 0; /* 配合 JavaScript fadeIn */
         }
 
         .card:hover {
@@ -169,23 +186,21 @@
         }
 
         .preview { 
-    height: 140px; /* 可以根據喜好調整高度 */
-    background: #050505; /* 背景設為深黑，若圖片比例不合會有黑邊，顯得專業 */
-    position: relative; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.preview img { 
-    width: 100%; 
-    height: 100%; 
-    /* 關鍵修改：cover 會保持比例放大直到填滿容器，並裁切多餘部分 */
-    object-fit: cover; 
-    opacity: 0.9;
-    transition: 0.4s;
-    /* 確保圖片置中 */
-    object-position: center; 
-}
+            height: 140px; 
+            background: #050505; 
+            position: relative; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .preview img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.9;
+            transition: 0.4s;
+            object-position: center; 
+        }
 
         .key-badge {
             position: absolute; top: 8px; right: 8px;
@@ -205,47 +220,38 @@
         }
 
         .card:hover .preview img {
-    opacity: 1;
-    transform: scale(1.05); /* 輕微放大感 */
-}
+            opacity: 1;
+            transform: scale(1.05);
+        }
 
         .copy-btn:hover { background: #fff; color: #000; }
 
-        ::-webkit-scrollbar {
-    width: 6px; /* 極細設計 */
-    height: 6px;
-}
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+            border: 2px solid transparent; 
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-yellow); 
+            box-shadow: 0 0 8px var(--accent-yellow);
+        }
 
-/* 滾輪軌道 (背景) */
-::-webkit-scrollbar-track {
-    background: transparent; /* 隱藏軌道，讓畫面更乾淨 */
-}
+        /* Firefox */
+        * { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.1) transparent; }
 
-/* 滾輪滑塊 (Handle) */
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1); /* 初始狀態：低調的半透明白 */
-    border-radius: 10px;
-    border: 2px solid transparent; /* 透過透明邊框創造 padding 感 */
-    background-clip: padding-box;
-}
-
-/* 當滑鼠移到滾輪上時 */
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-yellow); /* 變為螢光黃 */
-    box-shadow: 0 0 8px var(--accent-yellow); /* 增加微光效果 */
-}
-
-/* Firefox 專用設定 */
-* {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-}
-
-        /* 動畫 */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* 動畫定義 */
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
     </style>
 </head>
 <body>
+
+    <div id="loader-bar"></div>
 
     <header class="header">
         <div class="search-container">
@@ -283,15 +289,14 @@
         const grid = document.getElementById("grid");
         const dropdownMenu = document.getElementById("dropdownMenu");
         const filterBtn = document.getElementById("filterBtn");
+        const loaderBar = document.getElementById("loader-bar");
 
-        // 切換選單
         function toggleDropdown(event) {
             event.stopPropagation();
             dropdownMenu.classList.toggle("show");
             filterBtn.classList.toggle("active");
         }
 
-        // 點擊外部關閉選單
         window.onclick = function(event) {
             if (!event.target.matches('.filter-toggle') && !event.target.matches('.dropdown-menu') && !event.target.closest('.dropdown-menu')) {
                 dropdownMenu.classList.remove("show");
@@ -304,76 +309,80 @@
             const typeFilter = document.getElementById("typeFilter").value;
             const keyFilter = document.getElementById("keyFilter").value;
             
-            grid.style.opacity = "0.4";
+            // --- 搜尋動畫開始 ---
+            grid.classList.add("loading");
+            loaderBar.style.width = "30%";
             
             let url = query 
                 ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100` 
                 : "https://scriptblox.com/api/script/fetch?page=1&max=100";
 
             try {
+                loaderBar.style.width = "60%";
                 const res = await fetch(url);
                 const data = await res.json();
                 let scripts = data.result.scripts;
 
-                // 通用過濾邏輯
                 if (typeFilter === 'universal') {
                     scripts = scripts.filter(s => 
                         s.game && s.game.name.toLowerCase().includes("universal")
                     );
                 }
 
-                // 金鑰過濾
                 if (keyFilter !== 'all') {
                     scripts = scripts.filter(s => keyFilter === 'required' ? s.key : !s.key);
                 }
 
+                loaderBar.style.width = "90%";
                 renderScripts(scripts);
             } catch (err) {
                 console.error(err);
             } finally {
-                grid.style.opacity = "1";
+                // --- 搜尋動畫結束 ---
+                setTimeout(() => {
+                    loaderBar.style.width = "100%";
+                    setTimeout(() => { loaderBar.style.width = "0%"; }, 400);
+                    grid.classList.remove("loading");
+                }, 300);
             }
         }
 
         function renderScripts(scripts) {
-    grid.innerHTML = "";
-    scripts.forEach((script, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
+            grid.innerHTML = "";
+            scripts.forEach((script, index) => {
+                const card = document.createElement("div");
+                card.className = "card";
+                // 逐個淡入效果
+                card.style.animation = `fadeIn 0.4s ease forwards ${index * 0.03}s`;
 
-        // 預設圖片設為你本地的 No Image.png
-        let imgUrl = "No Image.png"; 
+                let imgUrl = "No Image.png"; 
 
-        if (script.game && script.game.imageUrl) {
-            const remoteUrl = script.game.imageUrl;
-            
-            // --- 攔截邏輯 ---
-            // 只要 API 回傳的網址包含 'no-script.webp' 或 'no-image'，
-            // 我們就不採用，讓它維持使用本地的 "No Image.png"
-            const isDefaultErrorImg = remoteUrl.includes("no-script.webp") || 
-                                     remoteUrl.includes("no-image") ||
-                                     remoteUrl.includes("static");
+                if (script.game && script.game.imageUrl) {
+                    const remoteUrl = script.game.imageUrl;
+                    const isDefaultErrorImg = remoteUrl.includes("no-script.webp") || 
+                                             remoteUrl.includes("no-image") ||
+                                             remoteUrl.includes("static");
 
-            if (!isDefaultErrorImg) {
-                imgUrl = remoteUrl.startsWith('http') ? remoteUrl : "https://scriptblox.com" + remoteUrl;
-            }
+                    if (!isDefaultErrorImg) {
+                        imgUrl = remoteUrl.startsWith('http') ? remoteUrl : "https://scriptblox.com" + remoteUrl;
+                    }
+                }
+
+                card.innerHTML = `
+                    <div class="preview">
+                        <img src="${imgUrl}" onerror="this.src='No Image.png'">
+                        ${script.key ? '<div class="key-badge">KEY</div>' : ''}
+                    </div>
+                    <div class="card-content">
+                        <div class="title">${script.title}</div>
+                        <div class="game-info">🎮 ${script.game ? script.game.name : "Universal"}</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
         }
 
-        card.innerHTML = `
-            <div class="preview">
-                <img src="${imgUrl}" onerror="this.src='No Image.png'">
-                ${script.key ? '<div class="key-badge">KEY</div>' : ''}
-            </div>
-            <div class="card-content">
-                <div class="title">${script.title}</div>
-                <div class="game-info">🎮 ${script.game ? script.game.name : "Universal"}</div>
-                <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy</button>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
         function copyToClipboard(btn, encoded) {
             navigator.clipboard.writeText(decodeURIComponent(encoded));
             const old = btn.textContent;
@@ -381,7 +390,4 @@
             setTimeout(() => btn.textContent = old, 1200);
         }
 
-        executeSearch();
-    </script>
-</body>
-</html>
+        // 初始載入
