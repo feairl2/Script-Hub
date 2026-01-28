@@ -176,13 +176,15 @@
     align-items: center;
     justify-content: center;
 }
-        .preview img { 
+.preview img { 
     width: 100%; 
     height: 100%; 
-    /* 關鍵：使用 contain 確保圖片上下左右都不會被裁切 */
-    object-fit: contain; 
+    /* 關鍵修改：cover 會保持比例放大直到填滿容器，並裁切多餘部分 */
+    object-fit: cover; 
     opacity: 0.9;
     transition: 0.4s;
+    /* 確保圖片置中 */
+    object-position: center; 
 }
 
         .key-badge {
@@ -334,31 +336,36 @@
         }
 
         function renderScripts(scripts) {
-            grid.innerHTML = "";
-            scripts.forEach((script, index) => {
-                const card = document.createElement("div");
-                card.className = "card";
-                card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
+    grid.innerHTML = "";
+    scripts.forEach((script, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
 
-                let imgUrl = "https://scriptblox.com/images/no-image.png";
-                if (script.game && script.game.imageUrl) {
-                    imgUrl = script.game.imageUrl.startsWith('http') ? script.game.imageUrl : "https://scriptblox.com" + script.game.imageUrl;
-                }
-
-                card.innerHTML = `
-                    <div class="preview">
-                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/200x120/050505/333?text=N/A'">
-                        ${script.key ? '<div class="key-badge">KEY</div>' : ''}
-                    </div>
-                    <div class="card-content">
-                        <div class="title">${script.title}</div>
-                        <div class="game-info">🎮 ${script.game ? script.game.name : "Universal"}</div>
-                        <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
+        // 預設圖片改為你本地的 No Image.png
+        let imgUrl = "No Image.png"; 
+        
+        if (script.game && script.game.imageUrl) {
+            // 如果 API 有給圖片路徑才替換
+            imgUrl = script.game.imageUrl.startsWith('http') 
+                ? script.game.imageUrl 
+                : "https://scriptblox.com" + script.game.imageUrl;
         }
+
+        card.innerHTML = `
+            <div class="preview">
+                <img src="${imgUrl}" onerror="this.src='No Image.png'">
+                ${script.key ? '<div class="key-badge">KEY</div>' : ''}
+            </div>
+            <div class="card-content">
+                <div class="title">${script.title}</div>
+                <div class="game-info">🎮 ${script.game ? script.game.name : "Universal"}</div>
+                <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
 
         function copyToClipboard(btn, encoded) {
             navigator.clipboard.writeText(decodeURIComponent(encoded));
