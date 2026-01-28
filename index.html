@@ -342,14 +342,18 @@
         card.className = "card";
         card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
 
-        // 預設圖片改為你本地的 No Image.png
-        let imgUrl = "No Image.png"; 
-        
+        // --- 優化後的圖片邏輯 ---
+        let imgUrl = "No Image.png"; // 預設使用本地圖
+
         if (script.game && script.game.imageUrl) {
-            // 如果 API 有給圖片路徑才替換
-            imgUrl = script.game.imageUrl.startsWith('http') 
-                ? script.game.imageUrl 
-                : "https://scriptblox.com" + script.game.imageUrl;
+            const remoteImg = script.game.imageUrl;
+            
+            // 如果 API 回傳的圖片網址包含 'no-image.png'，我們就不使用它，維持使用本地圖
+            if (!remoteImg.includes("no-image.png")) {
+                imgUrl = remoteImg.startsWith('http') 
+                    ? remoteImg 
+                    : "https://scriptblox.com" + remoteImg;
+            }
         }
 
         card.innerHTML = `
