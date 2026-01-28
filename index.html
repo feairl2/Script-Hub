@@ -3,228 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Hub | Ultra Professional Dark</title>
+    <title>Script Hub | Premium Dark Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- 1. 基礎設定 --- */
         :root {
             --bg-dark: #0A0A0A;
-            --card-dark: #0A0A0A;
+            --card-dark: #111111;
             --accent-yellow: #ffcc00;
-            --gray-btn: #2a2a2a;
-            --text-gray: #888888;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-muted: #888;
+            --input-bg: #161616;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; border: 2px solid var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-yellow); }
 
         body {
             margin: 0;
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: #ffffff;
-            line-height: 1.5;
+            overflow-x: hidden;
         }
 
-        /* --- 2. 搜尋欄 --- */
+        /* --- 2. 高級搜尋欄與過濾器 --- */
         .header {
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
-            /* 調整處：縮小上下 Padding，並設定最小高度 */
-            padding: 12px 20px; 
-            min-height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            /* 增加一條細微的底線，增加層次感 */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(15px);
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .search-container {
-            width: 100%;
-            max-width: 500px; /* 稍微縮小寬度，配合緊湊的高度 */
+        .search-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-group {
+            flex: 2;
             position: relative;
         }
 
         #searchInput {
             width: 100%;
-            padding: 8px 15px;
-            background: #151515;
-            border: 1px solid #252525;
-            border-radius: 30px;
+            padding: 12px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px; /* 縮小圓角 */
             color: #fff;
             font-size: 14px;
-            outline: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
             box-sizing: border-box;
         }
 
-        #searchInput::placeholder {
-            color: #555;
-            transition: color 0.3s;
-        }
-
         #searchInput:focus {
+            outline: none;
             border-color: var(--accent-yellow);
             background: #1a1a1a;
-            box-shadow: 0 0 20px rgba(255, 204, 0, 0.15), 
-                        0 0 40px rgba(255, 204, 0, 0.05);
-            transform: scale(1.02); /* 聚焦時輕微放大 */
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
         }
 
-        #searchInput:focus::placeholder {
-            color: #888;
-        }
-
-        .btn-action {
-            background: var(--gray-btn);
-            color: #fff;
-            border: 1.5px solid transparent;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 14px;
+        /* 自定義下拉選單樣式 */
+        .filter-select {
+            flex: 1;
+            padding: 12px 12px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #ccc;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 12px) center;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent-yellow);
+            color: #fff;
+        }
+
+        .filter-select:hover {
+            background-color: #1f1f1f;
         }
 
         /* --- 3. 佈局 --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-            padding: 20px;
-            max-width: 1400px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
             margin: 0 auto;
-            transition: opacity 0.3s ease;
         }
 
-        /* --- 4. 卡片與圖片修復 --- */
+        /* --- 4. 腳本卡片 --- */
         .card {
             background: var(--card-dark);
-            border: 1px solid #222;
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 280px;
-            opacity: 0;
-            transform: translateY(15px);
-            animation: cardAppear 0.4s forwards ease-out;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
         }
 
-        @keyframes cardAppear { to { opacity: 1; transform: translateY(0); } }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 204, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
         .preview {
-            height: 135px;
-            overflow: hidden;
-            background: #050505;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 150px;
+            background: #000;
             position: relative;
+            overflow: hidden;
         }
 
         .preview img {
             width: 100%;
             height: 100%;
-            /* 修正處：改為 contain 確保圖片完整不被裁剪 */
-            object-fit: contain; 
-            transition: transform 0.5s ease;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: 0.5s;
         }
 
-        /* 縮放動畫稍微調小，避免 contain 模式下邊緣閃爍 */
         .card:hover .preview img {
+            opacity: 1;
             transform: scale(1.05);
         }
 
         .key-badge {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
+            top: 12px;
+            right: 12px;
             background: var(--accent-yellow);
             color: #000;
             font-size: 10px;
             font-weight: 800;
-            padding: 2px 6px;
+            padding: 3px 8px;
             border-radius: 4px;
             text-transform: uppercase;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-            z-index: 5;
         }
 
         .card-content {
-            padding: 12px;
-            flex: 1;
+            padding: 16px;
             display: flex;
             flex-direction: column;
+            gap: 8px;
         }
 
         .title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 4px;
+            color: #eee;
+            line-height: 1.4;
+            height: 42px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            color: #fff;
-            height: 40px;
         }
 
         .game-info {
             font-size: 12px;
-            color: var(--text-gray);
-            margin-bottom: 10px;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            gap: 6px;
         }
 
         .game-info::before {
             content: "";
-            width: 5px;
-            height: 5px;
+            width: 6px;
+            height: 6px;
             background: var(--accent-yellow);
             border-radius: 50%;
-            flex-shrink: 0;
         }
 
         .copy-btn {
-            margin-top: auto;
+            margin-top: 10px;
             width: 100%;
-            padding: 8px;
-            background: #222;
+            padding: 10px;
+            background: transparent;
             border: 1px solid #333;
-            border-radius: 8px;
-            color: #ccc;
+            border-radius: 6px;
+            color: #fff;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: 0.2s;
         }
 
         .copy-btn:hover {
-            border-color: var(--accent-yellow);
-            color: #fff;
-            box-shadow: 0 0 8px rgba(255, 204, 0, 0.3);
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* 響應式優化 */
+        @media (max-width: 600px) {
+            .search-wrapper { flex-direction: column; align-items: stretch; }
+            .filter-select { width: 100%; }
         }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search scripts..."
-           onkeydown="if(event.key === 'Enter') searchScripts()">
-</div>
+        <div class="search-wrapper">
+            <div class="input-group">
+                <input type="text" id="searchInput" placeholder="Search premium scripts..." onkeydown="if(event.key === 'Enter') executeSearch()">
+            </div>
+            
+            <select id="typeFilter" class="filter-select" onchange="executeSearch()">
+                <option value="all">All Script</option>
+                <option value="universal">Universal Script</option>
+                <option value="game">All Games</option>
+            </select>
+
+            <select id="keyFilter" class="filter-select" onchange="executeSearch()">
+                <option value="all">All</option>
+                <option value="free">No Key</option>
+                <option value="required">Key System</option>
+            </select>
+        </div>
     </header>
 
     <main class="grid" id="grid"></main>
@@ -232,98 +250,96 @@
     <script>
         const grid = document.getElementById("grid");
 
-        async function loadHome() {
+        async function executeSearch() {
+            const query = document.getElementById("searchInput").value.trim();
+            const typeFilter = document.getElementById("typeFilter").value;
+            const keyFilter = document.getElementById("keyFilter").value;
+            
+            grid.style.opacity = "0.3";
+            
+            let url = query 
+                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=20` 
+                : "https://scriptblox.com/api/script/fetch?page=1&max=20";
+
             try {
-                const res = await fetch("https://scriptblox.com/api/script/fetch?page=1&max=20");
+                const res = await fetch(url);
                 const data = await res.json();
-                renderScripts(data.result.scripts);
+                let scripts = data.result.scripts;
+
+                // 執行過濾邏輯
+                if (typeFilter !== 'all') {
+                    scripts = scripts.filter(s => {
+                        const isUniversal = s.game && s.game.name === "Universal";
+                        return typeFilter === 'universal' ? isUniversal : !isUniversal;
+                    });
+                }
+
+                if (keyFilter !== 'all') {
+                    scripts = scripts.filter(s => {
+                        return keyFilter === 'required' ? s.key : !s.key;
+                    });
+                }
+
+                renderScripts(scripts);
             } catch (err) {
                 console.error("Fetch Error:", err);
-            }
-        }
-
-        async function searchScripts() {
-            const q = document.getElementById("searchInput").value.trim();
-            grid.style.opacity = "0";
-            
-            setTimeout(async () => {
-                const url = q 
-                    ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(q)}` 
-                    : "https://scriptblox.com/api/script/fetch?page=1&max=20";
-                
-                try {
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    renderScripts(data.result.scripts);
-                } catch (err) {
-                    console.error("Search Error:", err);
-                }
+            } finally {
                 grid.style.opacity = "1";
-            }, 250);
+            }
         }
 
         function renderScripts(scripts) {
             grid.innerHTML = "";
+            if (scripts.length === 0) {
+                grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; color: #555;'>No scripts found matching your criteria.</div>";
+                return;
+            }
+
             scripts.forEach((script, index) => {
+                const isUniversal = (script.game && script.game.name === "Universal");
+                
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.animationDelay = `${index * 0.04}s`;
+                card.style.animation = `cardAppear 0.4s ease-out forwards ${index * 0.05}s`;
 
-                const preview = document.createElement("div");
-                preview.className = "preview";
-
+                // 圖片處理
+                let imgUrl = "https://scriptblox.com/images/no-image.png";
                 if (script.game && script.game.imageUrl) {
-                    const img = document.createElement("img");
-                    img.src = script.game.imageUrl.startsWith('http') 
-                        ? script.game.imageUrl 
-                        : "https://scriptblox.com" + script.game.imageUrl;
-                    img.onerror = () => { img.style.display = 'none'; }; 
-                    preview.appendChild(img);
+                    imgUrl = script.game.imageUrl.startsWith('http') ? script.game.imageUrl : "https://scriptblox.com" + script.game.imageUrl;
                 }
 
-                // Key System 標記
-                if (script.key) {
-                    const keyBadge = document.createElement("div");
-                    keyBadge.className = "key-badge";
-                    keyBadge.textContent = "Key";
-                    preview.appendChild(keyBadge);
-                }
-
-                const content = document.createElement("div");
-                content.className = "card-content";
-
-                const title = document.createElement("div");
-                title.className = "title";
-                title.textContent = script.title || "Untitled";
-
-                const gameInfo = document.createElement("div");
-                gameInfo.className = "game-info";
-                gameInfo.textContent = (script.game && script.game.name) ? script.game.name : "Universal";
-
-                const copyBtn = document.createElement("button");
-                copyBtn.className = "copy-btn";
-                copyBtn.textContent = "Copy Script";
-                copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(script.script || "");
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = "Copied!";
-                    copyBtn.style.borderColor = "var(--accent-yellow)";
-                    setTimeout(() => {
-                        copyBtn.textContent = originalText;
-                        copyBtn.style.borderColor = "#333";
-                    }, 1200);
-                };
-
-                content.appendChild(title);
-                content.appendChild(gameInfo);
-                content.appendChild(copyBtn);
-                card.appendChild(preview);
-                card.appendChild(content);
+                card.innerHTML = `
+                    <div class="preview">
+                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/300x150/050505/333?text=No+Preview'">
+                        ${script.key ? '<div class="key-badge">Key</div>' : ''}
+                    </div>
+                    <div class="card-content">
+                        <div class="title">${script.title || "Untitled Script"}</div>
+                        <div class="game-info">${script.game ? script.game.name : "Universal"}</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy Script</button>
+                    </div>
+                `;
                 grid.appendChild(card);
             });
         }
 
-        loadHome();
+        function copyToClipboard(btn, encodedScript) {
+            const script = decodeURIComponent(encodedScript);
+            navigator.clipboard.writeText(script);
+            const originalText = btn.textContent;
+            btn.textContent = "Copied!";
+            btn.style.background = "var(--accent-yellow)";
+            btn.style.color = "#000";
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = "transparent";
+                btn.style.color = "#fff";
+            }, 1500);
+        }
+
+        // 初始化
+        executeSearch();
     </script>
 </body>
 </html>
