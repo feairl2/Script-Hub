@@ -303,6 +303,7 @@
         }
 
         async function executeSearch() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             const query = document.getElementById("searchInput").value.trim();
             const typeFilter = document.getElementById("typeFilter").value;
             const keyFilter = document.getElementById("keyFilter").value;
