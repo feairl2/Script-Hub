@@ -24,6 +24,7 @@
             overflow-x: hidden;
         }
 
+        /* 頂部載入進度條 */
         #loader-bar {
             position: fixed;
             top: 0;
@@ -303,18 +304,20 @@
             grid.classList.add("loading");
             loaderBar.style.width = "30%";
             
-            // 使用 max=100 儘可能獲取更多原始數據
+            // 邏輯改動：如果搜尋框是空的，就抓首頁；有關鍵字就抓全部搜尋結果
             let url = query 
-                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100` 
+                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100&mode=free` 
                 : "https://scriptblox.com/api/script/fetch?page=1&max=100";
 
             try {
                 loaderBar.style.width = "60%";
                 const res = await fetch(url);
                 const data = await res.json();
+                
+                // 邏輯改動：確保 scripts 是一個陣列，防止報錯
                 let scripts = data.result.scripts || [];
 
-                // 改進的過濾邏輯
+                // 邏輯改動：僅當使用者明確選擇「Universal」時才進行篩選
                 if (typeFilter === 'universal') {
                     scripts = scripts.filter(s => 
                         s.isUniversal === true || 
@@ -322,6 +325,7 @@
                     );
                 }
 
+                // 邏輯改動：Key 篩選器
                 if (keyFilter !== 'all') {
                     scripts = scripts.filter(s => keyFilter === 'required' ? s.key : !s.key);
                 }
@@ -330,7 +334,7 @@
                 renderScripts(scripts);
             } catch (err) {
                 console.error(err);
-                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; color:#555;'>Error loading scripts.</div>";
+                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding: 50px; color:#555;'>Failed to load scripts.</div>";
             } finally {
                 setTimeout(() => {
                     loaderBar.style.width = "100%";
@@ -343,26 +347,20 @@
         function renderScripts(scripts) {
             grid.innerHTML = "";
             if (scripts.length === 0) {
-                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; color:#555; padding: 40px;'>No scripts found. Try a different search.</div>";
+                grid.innerHTML = "<div style='grid-column: 1/-1; text-align:center; padding: 50px; color:#555;'>No scripts found.</div>";
                 return;
             }
 
             scripts.forEach((script, index) => {
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.animation = `fadeIn 0.4s ease forwards ${index * 0.03}s`;
+                card.style.animation = `fadeIn 0.4s ease forwards ${index * 0.02}s`;
 
-                let imgUrl = "No Image.png"; 
+                let imgUrl = "https://scriptblox.com/images/no-image.png"; 
 
                 if (script.game && script.game.imageUrl) {
                     const remoteUrl = script.game.imageUrl;
-                    const isDefaultErrorImg = remoteUrl.includes("no-script.webp") || 
-                                             remoteUrl.includes("no-image") ||
-                                             remoteUrl.includes("static");
-
-                    if (!isDefaultErrorImg) {
-                        imgUrl = remoteUrl.startsWith('http') ? remoteUrl : "https://scriptblox.com" + remoteUrl;
-                    }
+                    imgUrl = remoteUrl.startsWith('http') ? remoteUrl : "https://scriptblox.com" + remoteUrl;
                 }
 
                 card.innerHTML = `
@@ -382,16 +380,14 @@
 
         function copyToClipboard(btn, encoded) {
             const text = decodeURIComponent(encoded);
-            if (!text) {
-                btn.textContent = "No Script Found";
-                return;
-            }
+            if (!text) return;
             navigator.clipboard.writeText(text);
             const old = btn.textContent;
             btn.textContent = "Copied!";
             setTimeout(() => btn.textContent = old, 1200);
         }
 
+        // 頁面加載時執行一次
         executeSearch();
     </script>
 </body>
