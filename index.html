@@ -3,245 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Hub | Premium Dark Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Script Hub | Compact Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 1. 基礎設定 --- */
         :root {
             --bg-dark: #0A0A0A;
-            --card-dark: #111111;
+            --card-dark: #121212;
             --accent-yellow: #ffcc00;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --text-muted: #888;
+            --border-color: rgba(255, 255, 255, 0.08);
             --input-bg: #161616;
+            --radius: 8px;
         }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-yellow); }
 
         body {
             margin: 0;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Quicksand', 'Inter', sans-serif;
             background-color: var(--bg-dark);
             color: #ffffff;
-            overflow-x: hidden;
+            font-size: 13px; /* 整體比例縮小 */
         }
 
-        /* --- 2. 高級搜尋欄與過濾器 --- */
+        /* --- 1. 精簡導航欄 --- */
         .header {
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(15px);
-            padding: 20px 0;
+            backdrop-filter: blur(20px);
+            padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .search-wrapper {
-            max-width: 900px;
+        .search-container {
+            max-width: 700px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 15px;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            gap: 8px;
+            position: relative; /* 給懸浮選單定位 */
         }
 
-        .input-group {
-            flex: 2;
+        .input-wrapper {
+            flex: 1;
             position: relative;
         }
 
         #searchInput {
             width: 100%;
-            padding: 12px 16px;
+            padding: 10px 16px;
             background: var(--input-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px; /* 縮小圓角 */
+            border-radius: var(--radius);
             color: #fff;
-            font-size: 14px;
-            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 13px;
             box-sizing: border-box;
+            transition: 0.3s;
         }
 
         #searchInput:focus {
             outline: none;
             border-color: var(--accent-yellow);
             background: #1a1a1a;
-            box-shadow: 0 0 15px rgba(255, 204, 0, 0.1);
         }
 
-        /* 自定義下拉選單樣式 */
-        .filter-select {
-            flex: 1;
-            padding: 12px 12px;
-            background: var(--input-bg);
+        .filter-toggle {
+            padding: 0 15px;
+            background: #1e1e1e;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: var(--radius);
             color: #ccc;
-            font-size: 13px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23888' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: calc(100% - 12px) center;
+            font-weight: 700;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.3s;
+            white-space: nowrap;
         }
 
-        .filter-select:focus {
-            outline: none;
+        .filter-toggle:hover, .filter-toggle.active {
             border-color: var(--accent-yellow);
-            color: #fff;
+            color: var(--accent-yellow);
         }
 
-        .filter-select:hover {
-            background-color: #1f1f1f;
+        /* --- 2. 懸浮下拉選單 (Floating Menu) --- */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 15px;
+            width: 220px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            
+            /* 動畫起始狀態 */
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 1001;
         }
 
-        /* --- 3. 佈局 --- */
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .filter-item {
+            margin-bottom: 10px;
+        }
+
+        .filter-item:last-child { margin-bottom: 0; }
+
+        .filter-item label {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .dropdown-menu select {
+            width: 100%;
+            padding: 8px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #eee;
+            font-size: 12px;
+            font-family: 'Quicksand';
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* --- 3. 精簡卡片佈局 --- */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
-            padding: 40px 20px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 15px;
+            padding: 25px 15px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* --- 4. 腳本卡片 --- */
         .card {
             background: var(--card-dark);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 204, 0, 0.4);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: translateY(-4px);
+            border-color: rgba(255, 204, 0, 0.3);
         }
 
-        .preview {
-            height: 150px;
-            background: #000;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.8;
-            transition: 0.5s;
-        }
-
-        .card:hover .preview img {
-            opacity: 1;
-            transform: scale(1.05);
-        }
+        .preview { height: 130px; background: #000; position: relative; }
+        .preview img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
 
         .key-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--accent-yellow);
-            color: #000;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 3px 8px;
+            position: absolute; top: 8px; right: 8px;
+            background: var(--accent-yellow); color: #000;
+            font-size: 9px; font-weight: 800; padding: 2px 8px;
             border-radius: 4px;
-            text-transform: uppercase;
         }
 
-        .card-content {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #eee;
-            line-height: 1.4;
-            height: 42px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .game-info {
-            font-size: 12px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .game-info::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            background: var(--accent-yellow);
-            border-radius: 50%;
-        }
+        .card-content { padding: 12px; }
+        .title { font-weight: 700; font-size: 14px; margin-bottom: 6px; height: 38px; line-height: 1.4; overflow: hidden; }
+        .game-info { color: #777; font-size: 11px; margin-bottom: 12px; }
 
         .copy-btn {
-            margin-top: 10px;
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            width: 100%; padding: 8px; background: #1a1a1a; border: 1px solid #2a2a2a;
+            border-radius: 6px; color: #fff; font-family: 'Quicksand'; font-weight: 700;
+            font-size: 12px; cursor: pointer; transition: 0.2s;
         }
 
-        .copy-btn:hover {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
+        .copy-btn:hover { background: #fff; color: #000; }
 
-        /* 響應式優化 */
-        @media (max-width: 600px) {
-            .search-wrapper { flex-direction: column; align-items: stretch; }
-            .filter-select { width: 100%; }
-        }
+        /* 動畫 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="search-wrapper">
-            <div class="input-group">
-                <input type="text" id="searchInput" placeholder="Search premium scripts..." onkeydown="if(event.key === 'Enter') executeSearch()">
+        <div class="search-container">
+            <div class="input-wrapper">
+                <input type="text" id="searchInput" placeholder="Search elite scripts..." onkeydown="if(event.key === 'Enter') executeSearch()">
             </div>
             
-            <select id="typeFilter" class="filter-select" onchange="executeSearch()">
-                <option value="all">All Script</option>
-                <option value="universal">Universal Script</option>
-                <option value="game">All Games</option>
-            </select>
+            <button class="filter-toggle" id="filterBtn" onclick="toggleDropdown(event)">
+                Filters
+            </button>
 
-            <select id="keyFilter" class="filter-select" onchange="executeSearch()">
-                <option value="all">All</option>
-                <option value="free">No Key</option>
-                <option value="required">Key System</option>
-            </select>
+            <div id="dropdownMenu" class="dropdown-menu">
+                <div class="filter-item">
+                    <label>Script Type</label>
+                    <select id="typeFilter" onchange="executeSearch()">
+                        <option value="all">All Scripts</option>
+                        <option value="universal">Universal Script</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label>Key System</label>
+                    <select id="keyFilter" onchange="executeSearch()">
+                        <option value="all">Any</option>
+                        <option value="free">No Key</option>
+                        <option value="required">Key System</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -249,40 +228,55 @@
 
     <script>
         const grid = document.getElementById("grid");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+        const filterBtn = document.getElementById("filterBtn");
+
+        // 切換選單
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            dropdownMenu.classList.toggle("show");
+            filterBtn.classList.toggle("active");
+        }
+
+        // 點擊外部關閉選單
+        window.onclick = function(event) {
+            if (!event.target.matches('.filter-toggle') && !event.target.matches('.dropdown-menu') && !event.target.closest('.dropdown-menu')) {
+                dropdownMenu.classList.remove("show");
+                filterBtn.classList.remove("active");
+            }
+        }
 
         async function executeSearch() {
             const query = document.getElementById("searchInput").value.trim();
             const typeFilter = document.getElementById("typeFilter").value;
             const keyFilter = document.getElementById("keyFilter").value;
             
-            grid.style.opacity = "0.3";
+            grid.style.opacity = "0.4";
             
             let url = query 
-                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=20` 
-                : "https://scriptblox.com/api/script/fetch?page=1&max=20";
+                ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}&max=100` 
+                : "https://scriptblox.com/api/script/fetch?page=1&max=100";
 
             try {
                 const res = await fetch(url);
                 const data = await res.json();
                 let scripts = data.result.scripts;
 
-                // 執行過濾邏輯
-                if (typeFilter !== 'all') {
-                    scripts = scripts.filter(s => {
-                        const isUniversal = s.game && s.game.name === "Universal";
-                        return typeFilter === 'universal' ? isUniversal : !isUniversal;
-                    });
+                // 通用過濾邏輯
+                if (typeFilter === 'universal') {
+                    scripts = scripts.filter(s => 
+                        s.game && s.game.name.toLowerCase().includes("universal")
+                    );
                 }
 
+                // 金鑰過濾
                 if (keyFilter !== 'all') {
-                    scripts = scripts.filter(s => {
-                        return keyFilter === 'required' ? s.key : !s.key;
-                    });
+                    scripts = scripts.filter(s => keyFilter === 'required' ? s.key : !s.key);
                 }
 
                 renderScripts(scripts);
             } catch (err) {
-                console.error("Fetch Error:", err);
+                console.error(err);
             } finally {
                 grid.style.opacity = "1";
             }
@@ -290,19 +284,11 @@
 
         function renderScripts(scripts) {
             grid.innerHTML = "";
-            if (scripts.length === 0) {
-                grid.innerHTML = "<div style='grid-column: 1/-1; text-align: center; color: #555;'>No scripts found matching your criteria.</div>";
-                return;
-            }
-
             scripts.forEach((script, index) => {
-                const isUniversal = (script.game && script.game.name === "Universal");
-                
                 const card = document.createElement("div");
                 card.className = "card";
-                card.style.animation = `cardAppear 0.4s ease-out forwards ${index * 0.05}s`;
+                card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
 
-                // 圖片處理
                 let imgUrl = "https://scriptblox.com/images/no-image.png";
                 if (script.game && script.game.imageUrl) {
                     imgUrl = script.game.imageUrl.startsWith('http') ? script.game.imageUrl : "https://scriptblox.com" + script.game.imageUrl;
@@ -310,35 +296,26 @@
 
                 card.innerHTML = `
                     <div class="preview">
-                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/300x150/050505/333?text=No+Preview'">
-                        ${script.key ? '<div class="key-badge">Key</div>' : ''}
+                        <img src="${imgUrl}" onerror="this.src='https://via.placeholder.com/200x120/050505/333?text=N/A'">
+                        ${script.key ? '<div class="key-badge">KEY</div>' : ''}
                     </div>
                     <div class="card-content">
-                        <div class="title">${script.title || "Untitled Script"}</div>
-                        <div class="game-info">${script.game ? script.game.name : "Universal"}</div>
-                        <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy Script</button>
+                        <div class="title">${script.title}</div>
+                        <div class="game-info">🎮 ${script.game ? script.game.name : "Universal"}</div>
+                        <button class="copy-btn" onclick="copyToClipboard(this, \`${encodeURIComponent(script.script || "")}\`)">Copy</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        function copyToClipboard(btn, encodedScript) {
-            const script = decodeURIComponent(encodedScript);
-            navigator.clipboard.writeText(script);
-            const originalText = btn.textContent;
+        function copyToClipboard(btn, encoded) {
+            navigator.clipboard.writeText(decodeURIComponent(encoded));
+            const old = btn.textContent;
             btn.textContent = "Copied!";
-            btn.style.background = "var(--accent-yellow)";
-            btn.style.color = "#000";
-            
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = "transparent";
-                btn.style.color = "#fff";
-            }, 1500);
+            setTimeout(() => btn.textContent = old, 1200);
         }
 
-        // 初始化
         executeSearch();
     </script>
 </body>
