@@ -209,6 +209,36 @@
 
         .copy-btn:hover { background: #fff; color: #000; }
 
+        ::-webkit-scrollbar {
+    width: 6px; /* 極細設計 */
+    height: 6px;
+}
+
+/* 滾輪軌道 (背景) */
+::-webkit-scrollbar-track {
+    background: transparent; /* 隱藏軌道，讓畫面更乾淨 */
+}
+
+/* 滾輪滑塊 (Handle) */
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1); /* 初始狀態：低調的半透明白 */
+    border-radius: 10px;
+    border: 2px solid transparent; /* 透過透明邊框創造 padding 感 */
+    background-clip: padding-box;
+}
+
+/* 當滑鼠移到滾輪上時 */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-yellow); /* 變為螢光黃 */
+    box-shadow: 0 0 8px var(--accent-yellow); /* 增加微光效果 */
+}
+
+/* Firefox 專用設定 */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
         /* 動畫 */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
