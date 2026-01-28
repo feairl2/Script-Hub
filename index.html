@@ -342,22 +342,21 @@
         card.className = "card";
         card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.02}s`;
 
-        // 預設先給你的本地圖片
+        // 預設圖片設為你本地的 No Image.png
         let imgUrl = "No Image.png"; 
 
         if (script.game && script.game.imageUrl) {
-            const rawUrl = script.game.imageUrl;
+            const remoteUrl = script.game.imageUrl;
             
-            // --- 強效過濾邏輯 ---
-            // 1. 檢查是否包含官方的 'no-image'
-            // 2. 檢查是否包含 'static' (通常是 404 佔位圖的路徑)
-            // 3. 檢查是否為 Universal (通常這種都沒有好圖)
-            const isInvalid = rawUrl.includes("no-image") || 
-                             rawUrl.includes("static") || 
-                             (script.game.name && script.game.name.toLowerCase() === "universal");
+            // --- 攔截邏輯 ---
+            // 只要 API 回傳的網址包含 'no-script.webp' 或 'no-image'，
+            // 我們就不採用，讓它維持使用本地的 "No Image.png"
+            const isDefaultErrorImg = remoteUrl.includes("no-script.webp") || 
+                                     remoteUrl.includes("no-image") ||
+                                     remoteUrl.includes("static");
 
-            if (!isInvalid) {
-                imgUrl = rawUrl.startsWith('http') ? rawUrl : "https://scriptblox.com" + rawUrl;
+            if (!isDefaultErrorImg) {
+                imgUrl = remoteUrl.startsWith('http') ? remoteUrl : "https://scriptblox.com" + remoteUrl;
             }
         }
 
@@ -375,7 +374,6 @@
         grid.appendChild(card);
     });
 }
-
         function copyToClipboard(btn, encoded) {
             navigator.clipboard.writeText(decodeURIComponent(encoded));
             const old = btn.textContent;
